@@ -47,10 +47,10 @@ public class DatabaseConfiguration {
         config.setPassword(password);
         config.setDriverClassName(driver);
 
-        config.setMaximumPoolSize(10); // ,aximo de conexões liberadas
-        config.setMinimumIdle(1); // tamanho iniical do pool
+        config.setMaximumPoolSize(10); // maximo de conexões liberadas
+        config.setMinimumIdle(1); // tamanho inicial do pool
         config.setPoolName("library-db-poll");
-        config.setMaxLifetime(600000); //600 mil milisegundos
+        config.setMaxLifetime(600000); //600 mil milisegundos (10 minutos)
         config.setConnectionTimeout(100000); // timeout para conseguir uma conexão
         config.setConnectionTestQuery("select 1"); // query de teste
 

@@ -10,7 +10,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "book")
 @Data
-
+@ToString(exclude = "author")
 
 public class Book {
 
@@ -35,9 +35,14 @@ public class Book {
     @Column(name = "price", precision = 18, scale = 2)
     private BigDecimal price;
 
-  //  @ManyToOne(cascade = CascadeType.ALL)
-    @ManyToOne
-    @JoinColumn(name = "id_author", nullable = false)
+ //  @ManyToOne(cascade = CascadeType.ALL)
+   // @ManyToOne
+    @ManyToOne(
+            fetch = FetchType.LAZY // traz os dados do livro sem autor-carregamento lento
+    )
+  //  @JoinColumn(name = "id_author", nullable = false)
+    @JoinColumn(name = "id_author")
     private Author author;
+
 
 }

@@ -27,6 +27,19 @@ select 1
 
 
 
-select b.title as name_book, a.name as name_author
+
+
+select b.id, b.title as name_book, a.name as name_author
 from book as b
-join author as a on a.id = b.id_author
+join author as a on a.id = b.id_author;
+
+
+select * from book where id = '11086f26-098f-4102-a2a9-19e17ab0a824';
+
+select b.id as id_book, b.title as title_book, a.name as name_author, a.id as id_author
+from book b
+join author a on a.id = b.id_author;
+
+
+
+select * from book where id_author = '850aec4c-5d31-4067-9adb-edac05d4471c';

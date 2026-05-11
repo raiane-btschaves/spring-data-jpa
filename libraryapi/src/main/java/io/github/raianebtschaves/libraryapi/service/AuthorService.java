@@ -21,6 +21,13 @@ public class AuthorService {
         return repository.save(author);
     }
 
+    public void update(Author author) {
+        if (author.getId() == null) {
+            throw new IllegalArgumentException("To update, the author must already be saved in the database.");
+        }
+        repository.save(author);
+    }
+
     public Optional<Author> getById(UUID id) {
         return repository.findById(id);
     }

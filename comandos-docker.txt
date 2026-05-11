@@ -36,3 +36,13 @@ netstat -aof
 
 # Para procurar porta especifica
 netstat -aof | findstr 5432
+
+
+Doc: https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html
+https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html
+
+Doc- HTTP:
+https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Guides/Authentication
+
+Doc Swagger:
+https://editor.swagger.io/

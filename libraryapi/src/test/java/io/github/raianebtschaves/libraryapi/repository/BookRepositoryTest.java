@@ -29,9 +29,9 @@ class BookRepositoryTest {
         Book book = new Book();
         book.setIsbn("80907-84874");
         book.setPrice(BigDecimal.valueOf(100));
-        book.setGender(GenderBook.FICTION);
-        book.setTitle("Outro livro");
-        book.setPublication_date(LocalDate.of(1980, 1, 2));
+        book.setGender(GenderBook.MYSTERY);
+        book.setTitle("O Pavão Misterioso");
+        book.setDatePublication(LocalDate.of(1975, 3, 2));
 
         Author author = authorRepository
                 .findById(UUID.fromString("41c27808-730e-457e-b6f6-93271cb8202d"))
@@ -42,6 +42,30 @@ class BookRepositoryTest {
         repository.save(book);
     }
 
+    @Test
+    void saveTes2() {
+        // 1. Preencher os dados obrigatórios do Autor
+        Author author = new Author();
+        author.setName("Author Test");
+        author.setDateBirth(LocalDate.of(1980, 5, 20)); // Adicionado campo obrigatório
+        author.setNationality("Brasileira"); // Adicione caso seja NOT NULL na sua classe Author
+
+        authorRepository.save(author);
+
+        // 2. Criar e configurar o Livro
+        Book book = new Book();
+        book.setIsbn("80907-84874");
+        book.setPrice(BigDecimal.valueOf(100));
+        book.setGender(GenderBook.MYSTERY);
+        book.setTitle("O Pavão Misterioso");
+        book.setDatePublication(LocalDate.of(1975, 3, 2));
+
+        book.setAuthor(author);
+
+        // 3. Salvar o Livro
+        Book saveBook = repository.save(book);
+    }
+
 
     @Test
     void saveCascadeTest() {
@@ -50,7 +74,7 @@ class BookRepositoryTest {
         book.setPrice(BigDecimal.valueOf(100));
         book.setGender(GenderBook.FICTION);
         book.setTitle("Outro livro");
-        book.setPublication_date(LocalDate.of(1980, 1, 2));
+        book.setDatePublication(LocalDate.of(1980, 1, 2));
 
         Author author = new Author();
         author.setName("João");
@@ -70,7 +94,7 @@ class BookRepositoryTest {
         book.setPrice(BigDecimal.valueOf(100));
         book.setGender(GenderBook.FICTION);
         book.setTitle("Terceiro livro");
-        book.setPublication_date(LocalDate.of(1980, 1, 2));
+        book.setDatePublication(LocalDate.of(1980, 1, 2));
 
         Author author = new Author();
         author.setName("Alex");
@@ -143,5 +167,60 @@ class BookRepositoryTest {
         list.forEach(System.out::println);
     }
 
+    @Test
+    void listBooksWithQueryJPQL() {
+        var result = repository.listAllOrderByTitleAndPrice();
+        result.forEach(System.out::println);
+    }
+
+    @Test
+    void listBokAuthors() {
+        var result = repository.ListBookAuthors();
+        result.forEach(System.out::println);
+    }
+
+    @Test
+    void listNonRepeatedBookTitles() {
+        var result = repository.listNameDifferentBooks();
+        result.forEach(System.out::println);
+    }
+
+    @Test
+    void listGenderBooksAuthorsItalian() {
+        var result = repository.listGenderAuthorsItalian();
+        result.forEach(System.out::println);
+    }
+
+    @Test
+    void listByGenderQueryParamTest() {
+        var result = repository.findByGender(GenderBook.SCIENCE, "datePublication");
+        result.forEach(System.out::println);
+    }
+
+    @Test
+    void listByGenderPositionalQueryParamTest() {
+        var result = repository.findByGenderPositionalParameters("datePublication", GenderBook.SCIENCE);
+        result.forEach(System.out::println);
+    }
+
+    @Test
+    void deleteByGenderTest() {
+        repository.deleteByGender(GenderBook.MYSTERY);
+    }
+
+    @Test
+    void updateDatePublicationTest() {
+        repository.updateDatePublication(LocalDate.of(2000, 1, 1));
+    }
+
+
+    @Test
+    void updatedDatePublicationTest() {
+        LocalDate newDate = LocalDate.of(1993, 6,6);
+
+        UUID idByBook = UUID.fromString("38a8b63c-b496-43ec-b055-96dff8c4d83c");
+
+        repository.updatedDatePublication(newDate, idByBook);
+    }
 
 }

@@ -43,3 +43,28 @@ join author a on a.id = b.id_author;
 
 
 select * from book where id_author = '850aec4c-5d31-4067-9adb-edac05d4471c';
+
+Para buscar pedaços da string no banco
+select *
+from book
+where title like '%A Fronteira%'
+
+Faz a busca por titulo no banco
+select b.* from book as b order by b.title
+
+
+Listar autores italianos
+select distinct b.gender
+from book b
+join author a on a.id = b.id_author
+where a.nationality = 'Italiana'
+order by b.gender
+
+Transações do Spring
+begin;
+
+update book set title = 'O Detetive' where id = '38a8b63c-b496-43ec-b055-96dff8c4d83c';
+
+commit;
+
+rollback;

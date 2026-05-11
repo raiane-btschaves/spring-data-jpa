@@ -41,7 +41,7 @@ public interface BookRepository extends JpaRepository<Book, UUID> {
     List<Book> findByTitleOrIsbn(String title, String isbn);
 
     // select * from book where date_publication between ? and ?
-    List<Book> findByDatePublicationBetween(LocalDate start, LocalDate finish);
+    List<Book> findByPublicationDateBetween(LocalDate start, LocalDate finish);
 
     //select * from book where title like '%A Fronteira%'
     List<Book> findByTitleLike(String keyword);
@@ -92,12 +92,12 @@ public interface BookRepository extends JpaRepository<Book, UUID> {
 
     @Modifying
     @Transactional
-    @Query("update Book set datePublication = ?1")
+    @Query("update Book set publicationDate = ?1")
     void updateDatePublication(LocalDate newDate);
 
     @Modifying
     @Transactional
-    @Query("update Book b set b.datePublication = :newDate where b.id = :bookId")
+    @Query("update Book b set b.publicationDate = :newDate where b.id = :bookId")
     void updatedDatePublication(@Param("newDate") LocalDate newDate, @Param("bookId") UUID bookId);
 
 }

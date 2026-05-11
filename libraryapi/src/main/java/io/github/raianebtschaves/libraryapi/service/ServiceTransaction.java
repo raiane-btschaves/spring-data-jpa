@@ -44,7 +44,7 @@ public class ServiceTransaction {
                 .findById(UUID.fromString("8c312ef0-6c2b-4c51-90b8-a114002a71f6"))
                 .orElse(null);
 
-        book.setDatePublication(LocalDate.of(2024,7,16));
+        book.setPublicationDate(LocalDate.of(2024,7,16));
     }
 
     @Transactional
@@ -65,7 +65,7 @@ public class ServiceTransaction {
         book.setPrice(BigDecimal.valueOf(100));
         book.setGender(GenderBook.FICTION);
         book.setTitle("Livro da Consuelo");
-        book.setDatePublication(LocalDate.of(2024, 4, 2));
+        book.setPublicationDate(LocalDate.of(2024, 4, 2));
 
         book.setAuthor(author);
 

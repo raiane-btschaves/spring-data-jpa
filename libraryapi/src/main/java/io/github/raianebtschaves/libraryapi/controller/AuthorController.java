@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("authors")
@@ -50,6 +52,34 @@ public class AuthorController {
                     author.getNationality());
             return ResponseEntity.ok(dto);
         }
-        return  ResponseEntity.notFound().build();
+        return ResponseEntity.notFound().build();
+    }
+
+    // indempodetente
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> delete(@PathVariable("id") String id) {
+        var idAuthor = UUID.fromString(id);
+        Optional<Author> authorOptional = service.getById(idAuthor);
+
+        if (authorOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        service.delete(authorOptional.get());
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AuthorDTO>> search(
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "nationality", required = false) String nationality) {
+        List<Author> result = service.search(name, nationality);
+        List<AuthorDTO> list = result.stream().map(author -> new AuthorDTO(
+                author.getId(),
+                author.getName(),
+                author.getDateBirth(),
+                author.getNationality())
+        ).collect(Collectors.toList());
+        return ResponseEntity.ok(list);
     }
 }

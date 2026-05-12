@@ -1,7 +1,10 @@
 package io.github.raianebtschaves.libraryapi.service;
 
+import io.github.raianebtschaves.libraryapi.exceptions.OperationNotPermittedException;
 import io.github.raianebtschaves.libraryapi.model.Author;
 import io.github.raianebtschaves.libraryapi.repository.AuthorRepository;
+import io.github.raianebtschaves.libraryapi.repository.BookRepository;
+import io.github.raianebtschaves.libraryapi.validator.AuthorValidator;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,13 +14,20 @@ import java.util.UUID;
 @Service
 public class AuthorService {
 
-    private AuthorRepository repository;
+    private final AuthorRepository repository;
+    private final AuthorValidator validator;
+    private final BookRepository bookRepository;
 
-    public AuthorService(AuthorRepository repository) {
+    public AuthorService(AuthorRepository repository,
+                         AuthorValidator validator,
+                         BookRepository bookRepository) {
         this.repository = repository;
+        this.validator = validator;
+        this.bookRepository = bookRepository;
     }
 
     public Author save(Author author) {
+        validator.validate(author);
         return repository.save(author);
     }
 
@@ -25,6 +35,7 @@ public class AuthorService {
         if (author.getId() == null) {
             throw new IllegalArgumentException("To update, the author must already be saved in the database.");
         }
+        validator.validate(author);
         repository.save(author);
     }
 
@@ -33,6 +44,10 @@ public class AuthorService {
     }
 
     public void delete(Author author) {
+        if (haveBook(author)) {
+            throw new OperationNotPermittedException(
+                    "It is not permitted to delete an author who has books registered!");
+        }
         repository.delete(author);
     }
 
@@ -49,6 +64,10 @@ public class AuthorService {
             return repository.findByNationality(nacionality);
         }
         return repository.findAll();
+    }
+
+    public boolean haveBook(Author author) {
+        return bookRepository.existsByAuthor(author);
     }
 
 

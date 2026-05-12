@@ -92,7 +92,7 @@ public class AuthorRepositoryTest {
         book.setPrice(BigDecimal.valueOf(204));
         book.setGender(GenderBook.SCIENCE);
         book.setTitle("A Fronteira do Invisível");
-        book.setDatePublication(LocalDate.of(2018, 5, 11));
+        book.setPublicationDate(LocalDate.of(2018, 5, 11));
         book.setAuthor(author);
 
         Book book2 = new Book();
@@ -100,7 +100,7 @@ public class AuthorRepositoryTest {
         book2.setPrice(BigDecimal.valueOf(350));
         book2.setGender(GenderBook.SCIENCE);
         book2.setTitle("O Código do Imprevisto");
-        book2.setDatePublication(LocalDate.of(2025, 3, 3));
+        book2.setPublicationDate(LocalDate.of(2025, 3, 3));
         book2.setAuthor(author);
 
 

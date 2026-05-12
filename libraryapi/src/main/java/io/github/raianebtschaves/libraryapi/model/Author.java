@@ -37,7 +37,8 @@ public class Author {
     private String nationality;
 
     // @OneToMany(mappedBy = "author")
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+        //    cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     //   @Transient
     private List<Book> books;
 

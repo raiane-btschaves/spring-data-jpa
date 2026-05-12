@@ -31,13 +31,13 @@ class BookRepositoryTest {
         book.setPrice(BigDecimal.valueOf(100));
         book.setGender(GenderBook.MYSTERY);
         book.setTitle("O Pavão Misterioso");
-        book.setDatePublication(LocalDate.of(1975, 3, 2));
+        book.setPublicationDate(LocalDate.of(1975, 3, 2));
 
         Author author = authorRepository
-                .findById(UUID.fromString("41c27808-730e-457e-b6f6-93271cb8202d"))
+                .findById(UUID.fromString("a09660a6-2e15-4907-a01c-e42d5a8939e2"))
                 .orElse(null);
 
-        book.setAuthor(new Author());
+        book.setAuthor(author);
 
         repository.save(book);
     }
@@ -58,7 +58,7 @@ class BookRepositoryTest {
         book.setPrice(BigDecimal.valueOf(100));
         book.setGender(GenderBook.MYSTERY);
         book.setTitle("O Pavão Misterioso");
-        book.setDatePublication(LocalDate.of(1975, 3, 2));
+        book.setPublicationDate(LocalDate.of(1975, 3, 2));
 
         book.setAuthor(author);
 
@@ -74,7 +74,7 @@ class BookRepositoryTest {
         book.setPrice(BigDecimal.valueOf(100));
         book.setGender(GenderBook.FICTION);
         book.setTitle("Outro livro");
-        book.setDatePublication(LocalDate.of(1980, 1, 2));
+        book.setPublicationDate(LocalDate.of(1980, 1, 2));
 
         Author author = new Author();
         author.setName("João");
@@ -94,7 +94,7 @@ class BookRepositoryTest {
         book.setPrice(BigDecimal.valueOf(100));
         book.setGender(GenderBook.FICTION);
         book.setTitle("Terceiro livro");
-        book.setDatePublication(LocalDate.of(1980, 1, 2));
+        book.setPublicationDate(LocalDate.of(1980, 1, 2));
 
         Author author = new Author();
         author.setName("Alex");

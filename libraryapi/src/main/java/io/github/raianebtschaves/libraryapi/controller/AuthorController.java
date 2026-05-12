@@ -1,10 +1,14 @@
 package io.github.raianebtschaves.libraryapi.controller;
 
 import io.github.raianebtschaves.libraryapi.controller.dto.AuthorDTO;
+import io.github.raianebtschaves.libraryapi.controller.dto.ErrorResponse;
+import io.github.raianebtschaves.libraryapi.exceptions.DuplicateRecordException;
+import io.github.raianebtschaves.libraryapi.exceptions.OperationNotPermittedException;
 import io.github.raianebtschaves.libraryapi.model.Author;
 import io.github.raianebtschaves.libraryapi.service.AuthorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.resource.ResourceUrlProvider;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -19,24 +23,30 @@ import java.util.stream.Collectors;
 public class AuthorController {
 
     private final AuthorService service;
+    private final ResourceUrlProvider resourceUrlProvider;
 
-    public AuthorController(AuthorService service) {
+    public AuthorController(AuthorService service, ResourceUrlProvider resourceUrlProvider) {
         this.service = service;
-
+        this.resourceUrlProvider = resourceUrlProvider;
     }
 
     @PostMapping
-    public ResponseEntity<Void> save(@RequestBody AuthorDTO authorDTO) {
-        Author authorEntity = authorDTO.mapToAuthor();
-        service.save(authorEntity);
+    public ResponseEntity<Object> save(@RequestBody AuthorDTO authorDTO) {
+        try {
+            Author authorEntity = authorDTO.mapToAuthor();
+            service.save(authorEntity);
 
-        //http://localhost:8080/authors/5334a47b-873c-4680-b045-fe27a0f037a7
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}").buildAndExpand(authorEntity.getId())
-                .toUri();
+            //http://localhost:8080/authors/5334a47b-873c-4680-b045-fe27a0f037a7
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .path("/{id}").buildAndExpand(authorEntity.getId())
+                    .toUri();
 
-        return ResponseEntity.created(location).build();
+            return ResponseEntity.created(location).build();
+        } catch (DuplicateRecordException e) {
+            var errorDTO = ErrorResponse.conflict(e.getMessage());
+            return ResponseEntity.status(errorDTO.status()).body(errorDTO);
+        }
     }
 
     @GetMapping("{id}")
@@ -57,16 +67,21 @@ public class AuthorController {
 
     // indempodetente
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") String id) {
-        var idAuthor = UUID.fromString(id);
-        Optional<Author> authorOptional = service.getById(idAuthor);
+    public ResponseEntity<Object> delete(@PathVariable("id") String id) {
+        try {
+            var idAuthor = UUID.fromString(id);
+            Optional<Author> authorOptional = service.getById(idAuthor);
 
-        if (authorOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            if (authorOptional.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            service.delete(authorOptional.get());
+
+            return ResponseEntity.noContent().build();
+        } catch (OperationNotPermittedException e) {
+            var errorResponse = ErrorResponse.responseDefault(e.getMessage());
+            return ResponseEntity.status(errorResponse.status()).body(errorResponse);
         }
-        service.delete(authorOptional.get());
-
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
@@ -84,24 +99,29 @@ public class AuthorController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Void> update(
+    public ResponseEntity<Object> update(
             @PathVariable("id") String id, @RequestBody AuthorDTO dto) {
+        try {
 
-        var idAuthor = UUID.fromString(id);
-        Optional<Author> authorOptional = service.getById(idAuthor);
+            var idAuthor = UUID.fromString(id);
+            Optional<Author> authorOptional = service.getById(idAuthor);
 
-        if(authorOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            if (authorOptional.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            var author = authorOptional.get();
+            author.setName(dto.name());
+            author.setNationality(dto.nationality());
+            author.setDateBirth(dto.dateBirth());
+
+            service.update(author);
+
+            return ResponseEntity.noContent().build();
+
+        } catch (DuplicateRecordException e) {
+            var errorDTO = ErrorResponse.conflict(e.getMessage());
+            return ResponseEntity.status(errorDTO.status()).body(errorDTO);
         }
-
-        var author = authorOptional.get();
-        author.setName(dto.name());
-        author.setNationality(dto.nationality());
-        author.setDateBirth(dto.dateBirth());
-
-        service.update(author);
-
-        return ResponseEntity.noContent().build();
-
     }
 }

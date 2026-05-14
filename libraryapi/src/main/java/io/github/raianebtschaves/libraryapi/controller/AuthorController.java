@@ -6,6 +6,8 @@ import io.github.raianebtschaves.libraryapi.exceptions.DuplicateRecordException;
 import io.github.raianebtschaves.libraryapi.exceptions.OperationNotPermittedException;
 import io.github.raianebtschaves.libraryapi.model.Author;
 import io.github.raianebtschaves.libraryapi.service.AuthorService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.resource.ResourceUrlProvider;
@@ -20,20 +22,18 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("authors")
 //http://localhost:8080/authors
+@RequiredArgsConstructor
 public class AuthorController {
 
     private final AuthorService service;
-    private final ResourceUrlProvider resourceUrlProvider;
-
-    public AuthorController(AuthorService service, ResourceUrlProvider resourceUrlProvider) {
-        this.service = service;
-        this.resourceUrlProvider = resourceUrlProvider;
-    }
 
     @PostMapping
-    public ResponseEntity<Object> save(@RequestBody AuthorDTO authorDTO) {
+    public ResponseEntity<Object> save(@RequestBody @Valid AuthorDTO author) {
+//        if(true) {
+//            throw new RuntimeException("Simulando um erro interno inesperado para o Postamn");
+//        }
         try {
-            Author authorEntity = authorDTO.mapToAuthor();
+            Author authorEntity = author.mapToAuthor();
             service.save(authorEntity);
 
             //http://localhost:8080/authors/5334a47b-873c-4680-b045-fe27a0f037a7
@@ -100,7 +100,7 @@ public class AuthorController {
 
     @PutMapping("{id}")
     public ResponseEntity<Object> update(
-            @PathVariable("id") String id, @RequestBody AuthorDTO dto) {
+            @PathVariable("id") String id, @RequestBody @Valid AuthorDTO dto) {
         try {
 
             var idAuthor = UUID.fromString(id);

@@ -6,6 +6,8 @@ import io.github.raianebtschaves.libraryapi.repository.AuthorRepository;
 import io.github.raianebtschaves.libraryapi.repository.BookRepository;
 import io.github.raianebtschaves.libraryapi.validator.AuthorValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,7 +18,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AuthorService {
 
-    private final  AuthorRepository repository;
+    private final AuthorRepository repository;
     private final AuthorValidator validator;
     private final BookRepository bookRepository;
 
@@ -60,6 +62,23 @@ public class AuthorService {
         }
         return repository.findAll();
     }
+
+    public List<Author> searchByExample(String name, String nationality) {
+        var author = new Author();
+        author.setName(name);
+        author.setNationality(nationality);
+
+        ExampleMatcher matcher = ExampleMatcher
+                .matching()
+                .withIgnorePaths("id", "dateBirth", "registrationDate")
+                .withIgnoreNullValues()
+                .withIgnoreCase()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+        Example<Author> authorExample = Example.of(author, matcher);
+        return repository.findAll(authorExample);
+
+    }
+
 
     public boolean haveBook(Author author) {
         return bookRepository.existsByAuthor(author);
